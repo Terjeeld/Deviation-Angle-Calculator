@@ -5,7 +5,7 @@ import math
 
 st.title("Deviation Angle Calculator from MD and TVD")
 st.markdown("""
-Upload a CSV file with two columns:
+Upload a XLSX file with two columns:
 - `MD` (Measured Depth in meters)
 - `TVD` (True Vertical Depth in meters)
 

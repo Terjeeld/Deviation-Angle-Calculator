@@ -12,16 +12,19 @@ Upload a CSV file with two columns:
 The app will calculate the deviation angle between each consecutive pair of points.
 """)
 
-uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
+uploaded_file = st.file_uploader("Choose an Excel file", type=["xlsx"])
 
 if uploaded_file:
-    df = pd.read_csv(uploaded_file)
+    try:
+        df = pd.read_excel(uploaded_file)
 
-    if "MD" not in df.columns or "TVD" not in df.columns:
-        st.error("CSV must contain 'MD' and 'TVD' columns.")
-    else:
-        df = df.sort_values("MD").reset_index(drop=True)
-        results = []
+        if "MD" not in df.columns or "TVD" not in df.columns:
+            st.error("Excel file must contain 'MD' and 'TVD' columns.")
+        else:
+            df = df.sort_values("MD").reset_index(drop=True)
+            results = []
+    except Exception as e:
+        st.error(f"Error reading Excel file: {e}")
 
         for i in range(1, len(df)):
             md1, tvd1 = df.loc[i - 1, "MD"], df.loc[i - 1, "TVD"]

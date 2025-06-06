@@ -1,15 +1,16 @@
 import streamlit as st
 import pandas as pd
 import math
+import matplotlib.pyplot as plt
 
-st.title("Deviation Angle Calculator from MD and TVD")
+st.title("Wellbore Deviation Calculator")
 
 st.markdown("""
-Upload a XLSX file with two columns:
-- **MD** (Measured Depth in meters)
-- **TVD** (True Vertical Depth in meters)
+Upload an Excel file (.xlsx) with two columns:
+- `MD` (Measured Depth in meters)
+- `TVD` (True Vertical Depth in meters)
 
-The app will calculate the deviation angle between each consecutive pair of points.
+The app will calculate deviation angles and plot TVD vs MD.
 """)
 
 uploaded_file = st.file_uploader("Choose an Excel file", type=["xlsx"])
@@ -20,7 +21,7 @@ if uploaded_file:
     try:
         df = pd.read_excel(uploaded_file)
         st.write("✅ Excel file read successfully!")
-        st.write("Columns detected:", df.columns.tolist())
+        st.write("Detected columns:", df.columns.tolist())
         st.dataframe(df.head())
 
         if "MD" not in df.columns or "TVD" not in df.columns:
@@ -56,6 +57,17 @@ if uploaded_file:
 
             csv = results_df.to_csv(index=False).encode('utf-8')
             st.download_button("Download CSV", csv, "deviation_results.csv", "text/csv")
+
+            # 📈 Plot TVD vs MD (well path)
+            st.subheader("📈 Well Path: TVD vs MD")
+            fig, ax = plt.subplots()
+            ax.plot(df["MD"], df["TVD"], marker='o', linestyle='-')
+            ax.invert_yaxis()  # TVD increases downward
+            ax.set_xlabel("Measured Depth (m)")
+            ax.set_ylabel("True Vertical Depth (m)")
+            ax.set_title("TVD vs MD")
+            ax.grid(True)
+            st.pyplot(fig)
 
     except Exception as e:
         st.error(f"⚠️ Error reading Excel file: {e}")
